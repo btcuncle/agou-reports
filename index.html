@@ -77,10 +77,17 @@
   .loading { color: #555; font-size: 0.9em; }
   .error-msg { color: #ef5350; }
   
+  /* Mobile: full-screen toggle between list and reader */
   @media (max-width: 800px) {
-    .app { flex-direction: column; }
-    .sidebar { width: 100%; min-width: 0; max-height: 50vh; }
-    .main { padding: 16px; }
+    .app { position: relative; }
+    .sidebar { position: absolute; inset: 0; z-index: 10; width: 100%; }
+    .main { width: 100%; padding: 16px; }
+    .app.show-reader .sidebar { display: none; }
+    .app.show-reader .main { display: block; }
+    .app:not(.show-reader) .main { display: none; }
+    .report-view .back-btn { position: sticky; top: 0; background: #0f0f13; padding: 8px 0; z-index: 5; }
+    .filter-bar { padding: 8px 12px; gap: 4px; }
+    .filter-btn { padding: 3px 8px; font-size: 0.7em; }
   }
 </style>
 </head>
@@ -350,7 +357,9 @@ async function loadReport(file, isHtml) {
   renderList();
   
   const main = document.getElementById('mainContent');
+  const app = document.querySelector('.app');
   main.innerHTML = '<div class="loading">加载中...</div>';
+  app.classList.add('show-reader');
   
   try {
     const resp = await fetch(file);
@@ -378,6 +387,8 @@ async function loadReport(file, isHtml) {
 }
 
 function backToList() {
+  const app = document.querySelector('.app');
+  app.classList.remove('show-reader');
   document.getElementById('mainContent').innerHTML = `<div class="main-empty">
     <div class="big-icon">📄</div>
     <div>← 选择一份报告查看</div>
