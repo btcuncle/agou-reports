@@ -1,0 +1,395 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>阿狗报告中心</title>
+<script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body { font-family: -apple-system, 'PingFang SC', 'Microsoft YaHei', sans-serif; background: #0f0f13; color: #e0e0e0; }
+  
+  /* Layout */
+  .app { display: flex; height: 100vh; }
+  .sidebar { width: 380px; min-width: 380px; background: #14141e; border-right: 1px solid #2a2a3a; display: flex; flex-direction: column; overflow: hidden; }
+  .main { flex: 1; overflow-y: auto; padding: 24px 32px; }
+  
+  /* Sidebar header */
+  .sidebar-header { padding: 20px 20px 16px; border-bottom: 1px solid #2a2a3a; }
+  .sidebar-header h1 { font-size: 1.3em; background: linear-gradient(90deg, #00d4ff, #7b61ff); -webkit-background-clip: text; -webkit-text-fill-color: transparent; margin-bottom: 6px; }
+  .sidebar-header .stats { font-size: 0.75em; color: #666; }
+  
+  /* Filter tabs */
+  .filter-bar { display: flex; gap: 6px; padding: 12px 20px; border-bottom: 1px solid #2a2a3a; flex-wrap: wrap; }
+  .filter-btn { padding: 4px 12px; border-radius: 6px; border: 1px solid #333; background: transparent; color: #999; font-size: 0.75em; cursor: pointer; transition: all 0.2s; }
+  .filter-btn:hover { border-color: #7b61ff; color: #ccc; }
+  .filter-btn.active { background: rgba(123,97,255,0.15); border-color: #7b61ff; color: #7b61ff; }
+  
+  /* Report list */
+  .report-list { flex: 1; overflow-y: auto; padding: 8px 12px; }
+  .report-list::-webkit-scrollbar { width: 4px; }
+  .report-list::-webkit-scrollbar-thumb { background: #333; border-radius: 2px; }
+  
+  .category { margin-bottom: 16px; }
+  .category-header { font-size: 0.7em; color: #555; text-transform: uppercase; letter-spacing: 1.5px; padding: 8px 8px 4px; display: flex; align-items: center; gap: 6px; }
+  .category-header .dot { width: 6px; height: 6px; border-radius: 50%; }
+  
+  .report-item { padding: 10px 12px; border-radius: 8px; cursor: pointer; transition: all 0.15s; margin-bottom: 2px; display: flex; align-items: center; gap: 10px; }
+  .report-item:hover { background: #1e1e2e; }
+  .report-item.active { background: rgba(123,97,255,0.12); border-left: 3px solid #7b61ff; }
+  .report-item .icon { font-size: 1em; width: 24px; text-align: center; flex-shrink: 0; }
+  .report-item .info { flex: 1; min-width: 0; }
+  .report-item .title { font-size: 0.82em; color: #ddd; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .report-item .meta { font-size: 0.68em; color: #666; margin-top: 2px; }
+  .report-item .date-badge { font-size: 0.65em; color: #555; background: #1a1a28; padding: 2px 6px; border-radius: 4px; flex-shrink: 0; }
+  
+  .today .title { color: #00d4ff; }
+  .today .date-badge { color: #00d4ff; background: rgba(0,212,255,0.1); }
+  
+  /* Main content */
+  .main-empty { display: flex; align-items: center; justify-content: center; height: 100%; color: #444; font-size: 1em; flex-direction: column; gap: 12px; }
+  .main-empty .big-icon { font-size: 3em; opacity: 0.3; }
+  
+  .report-view { max-width: 900px; margin: 0 auto; }
+  .report-view .back-btn { display: inline-flex; align-items: center; gap: 4px; color: #666; font-size: 0.8em; cursor: pointer; margin-bottom: 16px; padding: 4px 10px; border-radius: 6px; border: 1px solid #2a2a3a; background: transparent; }
+  .report-view .back-btn:hover { border-color: #7b61ff; color: #7b61ff; }
+  
+  /* Markdown rendered styles */
+  .md-content { font-size: 0.88em; line-height: 1.75; }
+  .md-content h1 { font-size: 1.5em; color: #00d4ff; margin: 24px 0 12px; border-bottom: 1px solid #2a2a3a; padding-bottom: 8px; }
+  .md-content h2 { font-size: 1.2em; color: #7b61ff; margin: 20px 0 10px; }
+  .md-content h3 { font-size: 1em; color: #ccc; margin: 16px 0 8px; }
+  .md-content p { margin: 8px 0; }
+  .md-content table { width: 100%; border-collapse: collapse; margin: 12px 0; font-size: 0.88em; }
+  .md-content th { text-align: left; padding: 8px 10px; background: #1a1a24; color: #888; border-bottom: 1px solid #2a2a3a; }
+  .md-content td { padding: 6px 10px; border-bottom: 1px solid #1f1f2e; }
+  .md-content tr:hover td { background: #1a1a24; }
+  .md-content strong { color: #fff; }
+  .md-content em { color: #aaa; }
+  .md-content hr { border: none; border-top: 1px solid #2a2a3a; margin: 16px 0; }
+  .md-content code { background: #1a1a24; padding: 2px 6px; border-radius: 4px; font-size: 0.9em; color: #00d4ff; }
+  .md-content pre { background: #1a1a24; padding: 14px; border-radius: 8px; overflow-x: auto; margin: 12px 0; }
+  .md-content pre code { background: none; padding: 0; }
+  .md-content ul, .md-content ol { padding-left: 24px; margin: 8px 0; }
+  .md-content li { margin: 4px 0; }
+  .md-content blockquote { border-left: 3px solid #7b61ff; padding: 8px 16px; margin: 12px 0; background: #12121c; border-radius: 0 8px 8px 0; }
+  
+  .loading { color: #555; font-size: 0.9em; }
+  .error-msg { color: #ef5350; }
+  
+  @media (max-width: 800px) {
+    .app { flex-direction: column; }
+    .sidebar { width: 100%; min-width: 0; max-height: 50vh; }
+    .main { padding: 16px; }
+  }
+</style>
+</head>
+<body>
+<div class="app">
+  <div class="sidebar">
+    <div class="sidebar-header">
+      <h1>🐕 阿狗报告中心</h1>
+      <div class="stats" id="stats"></div>
+    </div>
+    <div class="filter-bar" id="filterBar"></div>
+    <div class="report-list" id="reportList"></div>
+  </div>
+  <div class="main" id="mainContent">
+    <div class="main-empty">
+      <div class="big-icon">📄</div>
+      <div>← 选择一份报告查看</div>
+    </div>
+  </div>
+</div>
+
+<script>
+const CATEGORIES = [
+  { id: 'dashboard', name: '仪表盘', icon: '📋', color: '#00d4ff', pattern: /^dashboard-.*\.html$/ },
+  { id: 'macro', name: '宏观晨报', icon: '🌍', color: '#7b61ff', pattern: /^global-macro-brief-/ },
+  { id: 'us', name: '美股晨报', icon: '🇺🇸', color: '#26a69a', pattern: /^us-market-brief-/ },
+  { id: 'apac', name: '亚太晨报', icon: '🌏', color: '#ff9800', pattern: /^apac-market-brief-/ },
+  { id: 'close', name: 'A股收盘', icon: '📈', color: '#ef5350', pattern: /^market-close-summary-/ },
+  { id: 'tech', name: '技术分析', icon: '⭐', color: '#ffc107', pattern: /^technical-analysis-daily-/ },
+  { id: 'signal', name: '产业信号', icon: '📡', color: '#00bcd4', pattern: /^industry-signal-score-/ },
+  { id: 'ai-infra', name: 'AI基础设施', icon: '🔬', color: '#e91e63', pattern: /^(china-ai-infra-daily|ai-infra)/ },
+  { id: 'radar', name: '机会雷达', icon: '🎯', color: '#4caf50', pattern: /^opportunity-radar-/ },
+  { id: '007-intel', name: '007情报日报', icon: '🕵️', color: '#ff6b6b', pattern: /^intel\/daily-intel-/ },
+  { id: '007-stock', name: '007个股研报', icon: '📑', color: '#f06595', pattern: /^stock-report-/ },
+  { id: '007-monthly', name: '007月报', icon: '📅', color: '#cc5de8', pattern: /^monthly-report-/ },
+  { id: 'other', name: '其他', icon: '📎', color: '#888', pattern: null },
+];
+
+// All reports from filesystem scan
+const allReports = [
+  // 2026-03-26
+  { file: 'dashboard-2026-03-26.html', cat: 'dashboard' },
+  { file: 'technical-analysis-daily-2026-03-26.md', cat: 'tech' },
+  { file: 'market-close-summary-2026-03-26.md', cat: 'close' },
+  { file: 'global-macro-brief-2026-03-26.md', cat: 'macro' },
+  { file: 'us-market-brief-2026-03-26.md', cat: 'us' },
+  // 2026-03-25
+  { file: 'industry-signal-score-2026-03-25.md', cat: 'signal' },
+  { file: 'technical-analysis-daily-2026-03-25.md', cat: 'tech' },
+  { file: 'market-close-summary-2026-03-25.md', cat: 'close' },
+  { file: 'us-market-brief-2026-03-25.md', cat: 'us' },
+  { file: 'global-macro-brief-2026-03-25.md', cat: 'macro' },
+  // 2026-03-24
+  { file: 'industry-signal-score-2026-03-24.md', cat: 'signal' },
+  { file: 'market-close-summary-2026-03-24.md', cat: 'close' },
+  { file: 'global-macro-brief-2026-03-24.md', cat: 'macro' },
+  // 2026-03-23
+  { file: 'opportunity-radar-2026-03-23.md', cat: 'radar' },
+  { file: 'china-ai-infra-daily-2026-03-23.md', cat: 'ai-infra' },
+  { file: 'market-close-summary-2026-03-23.md', cat: 'close' },
+  { file: 'global-macro-brief-2026-03-23.md', cat: 'macro' },
+  { file: 'us-market-brief-2026-03-23.md', cat: 'us' },
+  // 2026-03-22
+  { file: 'opportunity-radar-2026-03-22.md', cat: 'radar' },
+  { file: 'industry-signal-score-2026-03-22.md', cat: 'signal' },
+  { file: 'china-ai-infra-daily-2026-03-22.md', cat: 'ai-infra' },
+  { file: 'global-macro-brief-2026-03-22.md', cat: 'macro' },
+  // 2026-03-21
+  { file: 'us-market-brief-2026-03-21.md', cat: 'us' },
+  { file: 'opportunity-radar-2026-03-21.md', cat: 'radar' },
+  { file: 'industry-signal-score-2026-03-21.md', cat: 'signal' },
+  { file: 'china-ai-infra-daily-2026-03-21.md', cat: 'ai-infra' },
+  { file: 'global-macro-brief-2026-03-21.md', cat: 'macro' },
+  // 2026-03-20
+  { file: 'opportunity-radar-2026-03-20.md', cat: 'radar' },
+  { file: 'technical-analysis-daily-2026-03-20.md', cat: 'tech' },
+  { file: 'global-macro-brief-2026-03-20.md', cat: 'macro' },
+  { file: 'us-market-brief-2026-03-20.md', cat: 'us' },
+  // 2026-03-19
+  { file: 'opportunity-radar-2026-03-19.md', cat: 'radar' },
+  { file: 'industry-signal-score-2026-03-19.md', cat: 'signal' },
+  { file: 'market-close-summary-2026-03-19.md', cat: 'close' },
+  { file: 'apac-market-brief-2026-03-19.md', cat: 'apac' },
+  // 2026-03-18
+  { file: 'opportunity-radar-2026-03-18.md', cat: 'radar' },
+  { file: 'industry-signal-score-2026-03-18.md', cat: 'signal' },
+  { file: 'china-ai-infra-daily-2026-03-18.md', cat: 'ai-infra' },
+  { file: 'market-close-summary-2026-03-18.md', cat: 'close' },
+  { file: 'apac-market-brief-2026-03-18.md', cat: 'apac' },
+  { file: 'global-macro-brief-2026-03-18.md', cat: 'macro' },
+  // 2026-03-17
+  { file: 'opportunity-radar-2026-03-17.md', cat: 'radar' },
+  { file: 'industry-signal-score-2026-03-17.md', cat: 'signal' },
+  { file: 'apac-market-brief-2026-03-17.md', cat: 'apac' },
+  { file: 'us-market-brief-2026-03-17.md', cat: 'us' },
+  { file: 'market-close-summary-2026-03-17.md', cat: 'close' },
+  { file: 'global-macro-brief-2026-03-17.md', cat: 'macro' },
+  // 2026-03-16
+  { file: '技术分析复盘-2026-03-16.md', cat: 'tech' },
+  { file: 'a股收盘总结-2026-03-16.md', cat: 'close' },
+  { file: 'industry-signal-score-2026-03-16.md', cat: 'signal' },
+  { file: 'china-ai-infra-daily-2026-03-16.md', cat: 'ai-infra' },
+  { file: 'market-close-summary-2026-03-16.md', cat: 'close' },
+  { file: 'apac-market-brief-2026-03-16.md', cat: 'apac' },
+  // Intelligence (阿狗)
+  { file: '../intelligence/2026-03-25-ai-infra-cn.md', cat: 'ai-infra', dir: 'intelligence' },
+  { file: '../intelligence/2026-03-18-ai-infra-x.md', cat: 'ai-infra', dir: 'intelligence' },
+  { file: '../intelligence/2026-03-18-top-accounts-x.md', cat: 'ai-infra', dir: 'intelligence' },
+  { file: '../intelligence/2026-03-18-influencer-x.md', cat: 'ai-infra', dir: 'intelligence' },
+  { file: '../intelligence/2026-03-18-ai-infra-cn.md', cat: 'ai-infra', dir: 'intelligence' },
+  // 007 情报日报
+  { file: 'intel/daily-intel-2026-03-25.md', cat: '007-intel' },
+  { file: 'intel/daily-intel-2026-03-24.md', cat: '007-intel' },
+  { file: 'intel/daily-intel-2026-03-24-summary.md', cat: '007-intel' },
+  { file: 'intel/daily-intel-2026-03-23.md', cat: '007-intel' },
+  { file: 'intel/daily-intel-2026-03-22.md', cat: '007-intel' },
+  { file: 'intel/daily-intel-2026-03-21.md', cat: '007-intel' },
+  { file: 'intel/daily-intel-2026-03-20.md', cat: '007-intel' },
+  { file: 'intel/daily-intel-2026-03-20-summary.md', cat: '007-intel' },
+  { file: 'intel/daily-intel-2026-03-19.md', cat: '007-intel' },
+  { file: 'intel/daily-intel-2026-03-18.md', cat: '007-intel' },
+  { file: 'intel/daily-intel-2026-03-17.md', cat: '007-intel' },
+  { file: 'intel/daily-intel-2026-03-16.md', cat: '007-intel' },
+  { file: 'intel/daily-intel-2026-03-15.md', cat: '007-intel' },
+  // 007 个股研报
+  { file: 'stock-report-20260325.md', cat: '007-stock' },
+  { file: 'stock-report-20260324.md', cat: '007-stock' },
+  { file: 'stock-report-20260318.md', cat: '007-stock' },
+  { file: 'stock-report-20260316.md', cat: '007-stock' },
+  { file: 'stock-report-20260315.md', cat: '007-stock' },
+  { file: 'stock-report-20260314.md', cat: '007-stock' },
+  { file: 'stock-report-20260313.md', cat: '007-stock' },
+  { file: 'stock-report-20260312.md', cat: '007-stock' },
+  { file: 'stock-report-20260311.md', cat: '007-stock' },
+  { file: 'stock-report-20260310.md', cat: '007-stock' },
+  // 007 月报
+  { file: 'monthly-report-202603.md', cat: '007-monthly' },
+  { file: 'monthly-report-20260314.md', cat: '007-monthly' },
+  // 日报摘要
+  { file: 'daily-summary-20260316.md', cat: '007-stock' },
+  { file: 'daily-summary-20260312.md', cat: '007-stock' },
+];
+
+// Extract date from filename
+function extractDate(file) {
+  // Try YYYY-MM-DD first
+  let m = file.match(/(\d{4}-\d{2}-\d{2})/);
+  if (m) return m[1];
+  // Try YYYYMMDD
+  m = file.match(/(\d{8})/);
+  if (m) return m[1].slice(0,4) + '-' + m[1].slice(4,6) + '-' + m[1].slice(6,8);
+  return 'unknown';
+}
+
+// Get display name from filename
+function getDisplayName(file) {
+  // Strip path and extension
+  let base = file.replace(/^intel\//, '').replace(/\.md$/, '').replace(/\.html$/, '');
+  // Strip date suffix (both formats)
+  let name = base.replace(/-\d{4}-\d{2}-\d{2}$/, '').replace(/-\d{8}$/, '').replace(/^\d{4}-\d{2}-\d{2}-/, '').replace(/^\d{8}-/, '');
+  
+  // Detect summary variants
+  if (name.endsWith('-summary')) {
+    name = name.replace(/-summary$/, '');
+    const summaryNames = {
+      'Daily Intel': '情报日报（摘要版）',
+    };
+    return summaryNames[name] || (name.replace(/-/g, ' ') + '摘要').replace(/\b\w/g, c => c.toUpperCase());
+  }
+
+  const displayNames = {
+    'Us Market Brief': '美股市场晨报',
+    'Global Macro Brief': '全球宏观简报',
+    'Apac Market Brief': '亚太股市早报',
+    'Market Close Summary': 'A股收盘总结',
+    'Technical Analysis Daily': '技术分析复盘',
+    'Industry Signal Score': '产业信号评分',
+    'China Ai Infra Daily': '中国AI基础设施日报',
+    'Ai Infra Cn': 'AI基础设施产业监控',
+    'Ai Infra X': 'X平台AI基础设施监测',
+    'Top Accounts X': 'X平台关注账号监控',
+    'Influencer X': 'X平台KOL监控',
+    'Opportunity Radar': '机会雷达',
+    '技术分析复盘': '技术分析复盘',
+    'A股收盘总结': 'A股收盘总结',
+    'Dashboard': '📊 仪表盘',
+    // 007 reports
+    'Daily Intel': '情报日报',
+    'Stock Report': '个股研报',
+    'Monthly Report': '月度研报',
+    'Daily Summary': '日报摘要',
+  };
+  return displayNames[name] || name.replace(/-/g, ' ').replace(/\b\w/g, c => c.toUpperCase());
+}
+
+const TODAY = '2026-03-26';
+let activeFilter = 'all';
+let activeFile = null;
+
+function getCatInfo(catId) {
+  return CATEGORIES.find(c => c.id === catId) || CATEGORIES[CATEGORIES.length - 1];
+}
+
+// Build filter bar
+function buildFilters() {
+  const bar = document.getElementById('filterBar');
+  let html = `<button class="filter-btn active" data-filter="all">全部</button>`;
+  CATEGORIES.forEach(c => {
+    const count = allReports.filter(r => c.id === 'other' ? !CATEGORIES.slice(0,-1).some(cc => cc.id === r.cat) : r.cat === c.id).length;
+    if (count > 0) html += `<button class="filter-btn" data-filter="${c.id}">${c.icon} ${c.name} (${count})</button>`;
+  });
+  bar.innerHTML = html;
+  bar.querySelectorAll('.filter-btn').forEach(btn => {
+    btn.addEventListener('click', () => {
+      activeFilter = btn.dataset.filter;
+      bar.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+      renderList();
+    });
+  });
+}
+
+function renderList() {
+  const list = document.getElementById('reportList');
+  let filtered = activeFilter === 'all' ? [...allReports] : allReports.filter(r => activeFilter === 'other' ? !CATEGORIES.slice(0,-1).some(c => c.id === r.cat) : r.cat === activeFilter);
+  
+  // Group by date
+  const byDate = {};
+  filtered.forEach(r => {
+    const d = extractDate(r.file);
+    if (!byDate[d]) byDate[d] = [];
+    byDate[d].push(r);
+  });
+  
+  const dates = Object.keys(byDate).sort().reverse();
+  let html = '';
+  dates.forEach(date => {
+    const label = date === TODAY ? '📌 今天' : date;
+    html += `<div class="category"><div class="category-header">${label}</div>`;
+    byDate[date].forEach(r => {
+      const cat = getCatInfo(r.cat);
+      const isToday = date === TODAY;
+      const isActive = activeFile === r.file;
+      const path = r.dir === 'intelligence' ? r.file : r.file;
+      html += `<div class="report-item ${isToday ? 'today' : ''} ${isActive ? 'active' : ''}" data-file="${path}" data-is-html="${r.file.endsWith('.html')}">
+        <div class="icon">${cat.icon}</div>
+        <div class="info">
+          <div class="title">${getDisplayName(r.file)}</div>
+          <div class="meta">${cat.name}${r.dir === 'intelligence' ? ' · 情报目录' : ''}</div>
+        </div>
+        <div class="date-badge">${date === TODAY ? '今天' : date.slice(5)}</div>
+      </div>`;
+    });
+    html += '</div>';
+  });
+  
+  if (!html) html = '<div style="text-align:center;color:#555;padding:40px">暂无报告</div>';
+  list.innerHTML = html;
+  
+  list.querySelectorAll('.report-item').forEach(item => {
+    item.addEventListener('click', () => loadReport(item.dataset.file, item.dataset.isHtml === 'true'));
+  });
+}
+
+async function loadReport(file, isHtml) {
+  activeFile = file;
+  renderList();
+  
+  const main = document.getElementById('mainContent');
+  main.innerHTML = '<div class="loading">加载中...</div>';
+  
+  try {
+    const resp = await fetch(file);
+    if (!resp.ok) throw new Error(`HTTP ${resp.status}`);
+    const text = await resp.text();
+    
+    if (isHtml) {
+      main.innerHTML = `<div class="report-view">
+        <button class="back-btn" onclick="backToList()">← 返回列表</button>
+        <iframe src="${file}" style="width:100%;height:calc(100vh - 80px);border:none;border-radius:12px;background:#0f0f13"></iframe>
+      </div>`;
+    } else {
+      const html = marked.parse(text);
+      main.innerHTML = `<div class="report-view">
+        <button class="back-btn" onclick="backToList()">← 返回列表</button>
+        <div class="md-content">${html}</div>
+      </div>`;
+    }
+  } catch (e) {
+    main.innerHTML = `<div class="report-view">
+      <button class="back-btn" onclick="backToList()">← 返回列表</button>
+      <div class="error-msg">加载失败: ${e.message}</div>
+    </div>`;
+  }
+}
+
+function backToList() {
+  document.getElementById('mainContent').innerHTML = `<div class="main-empty">
+    <div class="big-icon">📄</div>
+    <div>← 选择一份报告查看</div>
+  </div>`;
+  activeFile = null;
+  renderList();
+}
+
+// Init
+document.getElementById('stats').textContent = `共 ${allReports.length} 份报告 · 最早 03-16 · 最新今天`;
+buildFilters();
+renderList();
+</script>
+</body>
+</html>
