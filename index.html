@@ -131,21 +131,25 @@ const CATEGORIES = [
 
 // All reports from filesystem scan
 const allReports = [
-  // 2026-03-27
-  { file: 'market-close-summary-2026-03-27.md', cat: 'close' },
-  { file: 'technical-analysis-daily-2026-03-27.md', cat: 'tech' },
-  { file: 'industry-signal-score-2026-03-26.md', cat: 'signal' },
-  { file: 'daily-intel-2026-03-27.md', cat: '007-intel' },
-  // 2026-03-27 (补发)
-  { file: 'us-market-brief-2026-03-27.md', cat: 'us' },
-  { file: 'global-macro-brief-2026-03-27.md', cat: 'macro' },
-  { file: 'apac-market-brief-2026-03-27.md', cat: 'apac' },
+  // 2026-03-30 (今天)
+  { file: 'us-market-brief-2026-03-30.md', cat: 'us' },
+  { file: 'technical-analysis-daily-2026-03-30.md', cat: 'tech' },
+  // 2026-03-29
+  { file: 'us-market-brief-2026-03-29.md', cat: 'us' },
+  { file: 'global-macro-brief-2026-03-29.md', cat: 'macro' },
   // 2026-03-28
   { file: 'us-market-brief-2026-03-28.md', cat: 'us' },
   { file: 'global-macro-brief-2026-03-28.md', cat: 'macro' },
   { file: 'industry-signal-score-2026-03-27.md', cat: 'signal' },
   { file: 'industry-signal-score-2026-03-28.md', cat: 'signal' },
   { file: 'daily-intel-2026-03-28.md', cat: '007-intel' },
+  // 2026-03-27
+  { file: 'market-close-summary-2026-03-27.md', cat: 'close' },
+  { file: 'technical-analysis-daily-2026-03-27.md', cat: 'tech' },
+  { file: 'daily-intel-2026-03-27.md', cat: '007-intel' },
+  { file: 'us-market-brief-2026-03-27.md', cat: 'us' },
+  { file: 'global-macro-brief-2026-03-27.md', cat: 'macro' },
+  { file: 'apac-market-brief-2026-03-27.md', cat: 'apac' },
   // 2026-03-26
   { file: 'dashboard-2026-03-26.html', cat: 'dashboard' },
   { file: 'technical-analysis-daily-2026-03-26.md', cat: 'tech' },
@@ -211,11 +215,15 @@ const allReports = [
   { file: 'market-close-summary-2026-03-16.md', cat: 'close' },
   { file: 'apac-market-brief-2026-03-16.md', cat: 'apac' },
   // Intelligence (阿狗)
-  { file: '../intelligence/2026-03-25-ai-infra-cn.md', cat: 'ai-infra', dir: 'intelligence' },
-  { file: '../intelligence/2026-03-18-ai-infra-x.md', cat: 'ai-infra', dir: 'intelligence' },
-  { file: '../intelligence/2026-03-18-top-accounts-x.md', cat: 'ai-infra', dir: 'intelligence' },
-  { file: '../intelligence/2026-03-18-influencer-x.md', cat: 'ai-infra', dir: 'intelligence' },
-  { file: '../intelligence/2026-03-18-ai-infra-cn.md', cat: 'ai-infra', dir: 'intelligence' },
+  { file: 'intelligence/2026-03-30-ai-infra-cn.md', cat: 'ai-infra' },
+  { file: 'intelligence/2026-03-28-ai-infra-cn.md', cat: 'ai-infra' },
+  { file: 'intelligence/2026-03-27-ai-infra-cn.md', cat: 'ai-infra' },
+  { file: 'intelligence/2026-03-26-ai-infra-cn.md', cat: 'ai-infra' },
+  { file: 'intelligence/2026-03-25-ai-infra-cn.md', cat: 'ai-infra' },
+  { file: 'intelligence/2026-03-18-ai-infra-x.md', cat: 'ai-infra' },
+  { file: 'intelligence/2026-03-18-top-accounts-x.md', cat: 'ai-infra' },
+  { file: 'intelligence/2026-03-18-influencer-x.md', cat: 'ai-infra' },
+  { file: 'intelligence/2026-03-18-ai-infra-cn.md', cat: 'ai-infra' },
   // 007 情报日报
   { file: 'intel/daily-intel-2026-03-25.md', cat: '007-intel' },
   { file: 'intel/daily-intel-2026-03-24.md', cat: '007-intel' },
@@ -301,7 +309,7 @@ function getDisplayName(file) {
   return displayNames[name] || name.replace(/-/g, ' ').replace(/\b\w/g, c => c.toUpperCase());
 }
 
-const TODAY = '2026-03-26';
+const TODAY = '2026-03-30';
 let activeFilter = 'all';
 let activeFile = null;
 
@@ -416,7 +424,7 @@ function backToList() {
 }
 
 // Init
-document.getElementById('stats').textContent = `共 ${allReports.length} 份报告 · 最早 03-16 · 最新今天`;
+document.getElementById('stats').textContent = `共 ${allReports.length} 份报告 · 最早 03-16 · 最新 03-30`;
 buildFilters();
 renderList();
 </script>
