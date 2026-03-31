@@ -131,9 +131,13 @@ const CATEGORIES = [
 
 // All reports from filesystem scan
 const allReports = [
-  // 2026-03-30 (今天)
+  // 2026-03-31 (今天)
+  { file: 'us-market-brief-2026-03-31.md', cat: 'us' },
+  { file: 'global-macro-brief-2026-03-31.md', cat: 'macro' },
+  // 2026-03-30
   { file: 'us-market-brief-2026-03-30.md', cat: 'us' },
   { file: 'technical-analysis-daily-2026-03-30.md', cat: 'tech' },
+  { file: 'industry-signal-score-2026-03-30.md', cat: 'signal' },
   // 2026-03-29
   { file: 'us-market-brief-2026-03-29.md', cat: 'us' },
   { file: 'global-macro-brief-2026-03-29.md', cat: 'macro' },
@@ -309,7 +313,7 @@ function getDisplayName(file) {
   return displayNames[name] || name.replace(/-/g, ' ').replace(/\b\w/g, c => c.toUpperCase());
 }
 
-const TODAY = '2026-03-30';
+const TODAY = '2026-03-31';
 let activeFilter = 'all';
 let activeFile = null;
 
@@ -424,7 +428,7 @@ function backToList() {
 }
 
 // Init
-document.getElementById('stats').textContent = `共 ${allReports.length} 份报告 · 最早 03-16 · 最新 03-30`;
+document.getElementById('stats').textContent = `共 ${allReports.length} 份报告 · 最早 03-16 · 最新 03-31`;
 buildFilters();
 renderList();
 </script>
