@@ -147,6 +147,9 @@ const allReports = [
   { file: 'industry-signal-score-2026-03-27.md', cat: 'signal' },
   { file: 'industry-signal-score-2026-03-28.md', cat: 'signal' },
   { file: 'daily-intel-2026-03-28.md', cat: '007-intel' },
+  // 2026-03-30 (007日报)
+  { file: 'daily-intel-2026-03-30.md', cat: '007-intel' },
+  { file: 'daily-intel-2026-03-30-summary.md', cat: '007-intel' },
   // 2026-03-27
   { file: 'market-close-summary-2026-03-27.md', cat: 'close' },
   { file: 'technical-analysis-daily-2026-03-27.md', cat: 'tech' },
@@ -276,6 +279,9 @@ function extractDate(file) {
 function getDisplayName(file) {
   // Strip path and extension
   let base = file.replace(/^intel\//, '').replace(/\.md$/, '').replace(/\.html$/, '');
+  // Detect summary variant first (e.g. daily-intel-2026-03-30-summary)
+  let isSummary = base.endsWith('-summary');
+  if (isSummary) base = base.replace(/-summary$/, '');
   // Strip date suffix (both formats)
   let name = base.replace(/-\d{4}-\d{2}-\d{2}$/, '').replace(/-\d{8}$/, '').replace(/^\d{4}-\d{2}-\d{2}-/, '').replace(/^\d{8}-/, '');
   
