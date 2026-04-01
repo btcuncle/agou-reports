@@ -131,7 +131,7 @@ const CATEGORIES = [
 
 // All reports from filesystem scan
 const allReports = [
-  // 2026-03-31 (今天)
+  // 2026-03-31
   { file: 'dashboard-2026-03-31.html', cat: 'dashboard' },
   { file: 'us-market-brief-2026-03-31.md', cat: 'us' },
   { file: 'global-macro-brief-2026-03-31.md', cat: 'macro' },
@@ -448,7 +448,12 @@ function backToList() {
 }
 
 // Init
-document.getElementById('stats').textContent = `共 ${allReports.length} 份报告 · 最早 03-15 · 最新 03-31`;
+// Calculate earliest and latest dates
+const allDates = allReports.map(r => extractDate(r.file)).filter(d => d !== 'unknown').sort();
+const earliestDate = allDates[0] || 'unknown';
+const latestDate = allDates[allDates.length - 1] || 'unknown';
+const formatDate = (d) => d !== 'unknown' ? d.slice(5) : d; // MM-DD
+document.getElementById('stats').textContent = `共 ${allReports.length} 份报告 · 最早 ${formatDate(earliestDate)} · 最新 ${formatDate(latestDate)}`;
 buildFilters();
 renderList();
 </script>
