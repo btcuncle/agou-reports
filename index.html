@@ -268,6 +268,14 @@ const allReports = [
   // 日报摘要
   { file: 'daily-summary-20260316.md', cat: '007-stock' },
   { file: 'daily-summary-20260312.md', cat: '007-stock' },
+  // 2026-04-01 (今天)
+  { file: 'us-market-brief-2026-04-01.md', cat: 'us' },
+  { file: 'global-macro-brief-2026-04-01.md', cat: 'macro' },
+  // 2026-03-31 (补充)
+  { file: 'industry-signal-score-2026-03-31.md', cat: 'signal' },
+  { file: 'intel/daily-intel-2026-03-31.md', cat: '007-intel' },
+  { file: 'intel/daily-intel-2026-03-31-summary.md', cat: '007-intel' },
+  { file: 'intelligence/2026-03-31-ai-infra-cn.md', cat: 'ai-infra' },
 ];
 
 // Extract date from filename
@@ -325,7 +333,7 @@ function getDisplayName(file) {
   return displayNames[name] || name.replace(/-/g, ' ').replace(/\b\w/g, c => c.toUpperCase());
 }
 
-const TODAY = '2026-03-31';
+const TODAY = '2026-04-01';
 let activeFilter = 'all';
 let activeFile = null;
 
