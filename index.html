@@ -276,12 +276,18 @@ const allReports = [
   { file: 'technical-analysis-daily-2026-04-01.md', cat: 'tech' },
   { file: 'industry-signal-score-2026-04-01.md', cat: 'signal' },
   { file: 'intel/daily-intel-2026-04-01.md', cat: '007-intel' },
-  // 2026-04-02 (今天)
+  // 2026-04-03 (今天)
+  { file: 'us-market-brief-2026-04-03.md', cat: 'us' },
+  { file: 'global-macro-brief-2026-04-03.md', cat: 'macro' },
+  { file: 'market-close-summary-2026-04-03.md', cat: 'close' },
+  { file: 'technical-analysis-daily-2026-04-03.md', cat: 'tech' },
+  // 2026-04-02 (昨天)
   { file: 'us-market-brief-2026-04-02.md', cat: 'us' },
   { file: 'global-macro-brief-2026-04-02.md', cat: 'macro' },
   { file: 'apac-market-brief-2026-04-02.md', cat: 'apac' },
   { file: 'market-close-summary-2026-04-02.md', cat: 'close' },
   { file: 'technical-analysis-daily-2026-04-02.md', cat: 'tech' },
+  { file: 'industry-signal-score-2026-04-02.md', cat: 'signal' },
   { file: 'intel/daily-intel-2026-04-02.md', cat: '007-intel' },
   // 2026-03-31 (补充)
   { file: 'industry-signal-score-2026-03-31.md', cat: 'signal' },
@@ -345,7 +351,7 @@ function getDisplayName(file) {
   return displayNames[name] || name.replace(/-/g, ' ').replace(/\b\w/g, c => c.toUpperCase());
 }
 
-const TODAY = '2026-04-02';
+const TODAY = '2026-04-03';
 let activeFilter = 'all';
 let activeFile = null;
 
