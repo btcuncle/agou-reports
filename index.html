@@ -276,12 +276,28 @@ const allReports = [
   { file: 'technical-analysis-daily-2026-04-01.md', cat: 'tech' },
   { file: 'industry-signal-score-2026-04-01.md', cat: 'signal' },
   { file: 'intel/daily-intel-2026-04-01.md', cat: '007-intel' },
-  // 2026-04-03 (今天)
+  // 2026-04-07 (今天·周二)
+  { file: 'us-market-brief-2026-04-07.md', cat: 'us' },
+  { file: 'global-macro-brief-2026-04-07.md', cat: 'macro' },
+  { file: 'apac-market-brief-2026-04-07.md', cat: 'apac' },
+  // 2026-04-06 (周一·A股开市)
+  { file: 'market-close-summary-2026-04-06.md', cat: 'close' },
+  { file: 'technical-analysis-daily-2026-04-06.md', cat: 'tech' },
+  { file: 'industry-signal-score-2026-04-06.md', cat: 'signal' },
+  { file: 'global-macro-brief-2026-04-06.md', cat: 'macro' },
+  // 2026-04-05 (周日)
+  { file: 'us-market-brief-2026-04-05.md', cat: 'us' },
+  { file: 'global-macro-brief-2026-04-05.md', cat: 'macro' },
+  { file: 'industry-signal-score-2026-04-05.md', cat: 'signal' },
+  // 2026-04-04 (周六)
+  { file: 'industry-signal-score-2026-04-04.md', cat: 'signal' },
+  // 2026-04-03
   { file: 'us-market-brief-2026-04-03.md', cat: 'us' },
   { file: 'global-macro-brief-2026-04-03.md', cat: 'macro' },
   { file: 'market-close-summary-2026-04-03.md', cat: 'close' },
   { file: 'technical-analysis-daily-2026-04-03.md', cat: 'tech' },
-  // 2026-04-03 (今天)
+  { file: 'industry-signal-score-2026-04-03.md', cat: 'signal' },
+  { file: 'x-kol-signals-2026-04-03.md', cat: 'signal' },
   { file: 'intel/daily-intel-2026-04-03.md', cat: '007-intel' },
   // 2026-04-02 (昨天)
   { file: 'us-market-brief-2026-04-02.md', cat: 'us' },
@@ -353,7 +369,7 @@ function getDisplayName(file) {
   return displayNames[name] || name.replace(/-/g, ' ').replace(/\b\w/g, c => c.toUpperCase());
 }
 
-const TODAY = '2026-04-03';
+const TODAY = '2026-04-07';
 let activeFilter = 'all';
 let activeFile = null;
 
