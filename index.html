@@ -115,6 +115,7 @@
 <script>
 const CATEGORIES = [
   { id: 'dashboard', name: '仪表盘', icon: '📋', color: '#00d4ff', pattern: /^dashboard-.*\.html$/ },
+  { id: 'sentiment', name: '情绪周期', icon: '🧠', color: '#9c27b0', pattern: /^880005-sentiment-/ },
   { id: 'macro', name: '宏观晨报', icon: '🌍', color: '#7b61ff', pattern: /^global-macro-brief-/ },
   { id: 'us', name: '美股晨报', icon: '🇺🇸', color: '#26a69a', pattern: /^us-market-brief-/ },
   { id: 'apac', name: '亚太晨报', icon: '🌏', color: '#ff9800', pattern: /^apac-market-brief-/ },
@@ -276,6 +277,10 @@ const allReports = [
   { file: 'technical-analysis-daily-2026-04-01.md', cat: 'tech' },
   { file: 'industry-signal-score-2026-04-01.md', cat: 'signal' },
   { file: 'intel/daily-intel-2026-04-01.md', cat: '007-intel' },
+  // 2026-04-13 (周一)
+  { file: '880005-sentiment-2026-04-13.md', cat: 'sentiment' },
+  { file: 'market-close-summary-2026-04-13.md', cat: 'close' },
+  { file: 'x-platform-monitor-2026-04-13.md', cat: 'ai-infra' },
   // 2026-04-11 (周六)
   { file: 'technical-analysis-daily-2026-04-11.md', cat: 'tech' },
   // 2026-04-10 (周五)
