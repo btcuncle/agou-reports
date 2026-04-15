@@ -283,6 +283,12 @@ const allReports = [
   { file: 'x-platform-monitor-2026-04-13.md', cat: 'ai-infra' },
   // 2026-04-11 (周六)
   { file: 'technical-analysis-daily-2026-04-11.md', cat: 'tech' },
+  // 2026-04-15 (周三)
+  { file: 'morning-brief-2026-04-15.md', cat: 'macro' },
+  { file: 'technical-analysis-daily-2026-04-15.md', cat: 'tech' },
+  { file: 'market-close-2026-04-15.md', cat: 'close' },
+  { file: 'emotion-monitor-2026-04-15.md', cat: 'emotion' },
+  { file: 'decision-summary-2026-04-15.md', cat: 'emotion' },
   // 2026-04-14 (周二)
   { file: 'technical-analysis-daily-2026-04-14.md', cat: 'tech' },
   // 2026-04-10 (周五)
@@ -392,7 +398,7 @@ function getDisplayName(file) {
   return displayNames[name] || name.replace(/-/g, ' ').replace(/\b\w/g, c => c.toUpperCase());
 }
 
-const TODAY = '2026-04-11';
+const TODAY = '2026-04-15';
 let activeFilter = 'all';
 let activeFile = null;
 
